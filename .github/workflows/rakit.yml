@@ -17,20 +17,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git gettext libncurses5-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget
 
-      - name: Unduh Alat Konstruksi Paket Instan
-        run: |
-          git clone --depth=1 https://github.com/openwrt/packages.git
-          
       - name: Tarik Repositori AmneziaWG
         run: |
-          git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git amnezia
+          # Mengkloning langsung isi repositori ke folder utama
+          git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git .
           
       - name: Enkapsulasi Kompilasi Tools Mandiri
         run: |
-          cd amnezia/src
+          # Masuk langsung ke folder src karena tidak ada folder perantara
+          cd src
           make CC=gcc
-          mkdir -p ../../bin/packages/ipq6000/
-          cp amneziawg ../../bin/packages/ipq6000/
+          mkdir -p ../bin/packages/ipq6000/
+          cp amneziawg ../bin/packages/ipq6000/
           
       - name: Simpan Hasil Jadi (.IPK Paket)
         uses: actions/upload-artifact@v4
