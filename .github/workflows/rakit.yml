@@ -1,0 +1,12 @@
+name: Rakit AmneziaWG Flint
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Jalankan Server Rakitan
+        run: |
+          echo "Memulai kompilasi untuk kernel 5.4.164..."
+          echo "Arsitektur: aarch64_cortex-a53"
