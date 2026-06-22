@@ -15,26 +15,22 @@ jobs:
       - name: Siapkan Alat Sistem Linux
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git gettext libncurses5-dev libssl-dev po3-distutils rsync unzip zlib1g-dev file wget
+          sudo apt-get install -y build-essential git gettext libncurses5-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget
 
       - name: Unduh Alat Konstruksi Paket Instan
         run: |
-          # Memakai alat pembangun paket mandiri tanpa dependensi SDK penuh
           git clone --depth=1 https://github.com/openwrt/packages.git
-          cd packages
           
       - name: Tarik Repositori AmneziaWG
         run: |
           git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git amnezia
-          mkdir -p output
           
       - name: Enkapsulasi Kompilasi Tools Mandiri
         run: |
-          # Mengompilasi perkakas pembantu utama untuk alat kontrol VPN
           cd amnezia/src
           make CC=gcc
           mkdir -p ../../bin/packages/ipq6000/
-          cp amneziawg ../../bin/packages/ipq6000/amneziawg-tools
+          cp amneziawg ../../bin/packages/ipq6000/
           
       - name: Simpan Hasil Jadi (.IPK Paket)
         uses: actions/upload-artifact@v4
