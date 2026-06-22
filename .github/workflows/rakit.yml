@@ -19,16 +19,16 @@ jobs:
 
       - name: Tarik Repositori AmneziaWG
         run: |
-          # Mengkloning langsung isi repositori ke folder utama
-          git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git .
+          # Mengkloning kode ke folder terpisah agar tidak bentrok dengan isi alur kerja
+          git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git amnezia-src
           
       - name: Enkapsulasi Kompilasi Tools Mandiri
         run: |
-          # Masuk langsung ke folder src karena tidak ada folder perantara
-          cd src
+          # Masuk ke folder amnezia-src lalu langsung ke folder src di dalamnya
+          cd amnezia-src/src
           make CC=gcc
-          mkdir -p ../bin/packages/ipq6000/
-          cp amneziawg ../bin/packages/ipq6000/
+          mkdir -p ../../bin/packages/ipq6000/
+          cp amneziawg ../../bin/packages/ipq6000/
           
       - name: Simpan Hasil Jadi (.IPK Paket)
         uses: actions/upload-artifact@v4
