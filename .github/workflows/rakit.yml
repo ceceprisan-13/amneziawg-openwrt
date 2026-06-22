@@ -22,8 +22,8 @@ jobs:
         git clone --depth=1 --branch openwrt-21.02 https://github.com/openwrt/openwrt.git openwrt
         cd openwrt
         
-        # Masukkan resep paket AmneziaWG ke sistem utama
-        echo "src-git amnezia https://github.com/amnezia-vpn/amneziawg-openwrt.git;main" >> feeds.conf.default
+        # Memperbaiki nama branch dari main menjadi master
+        echo "src-git amnezia https://github.com/amnezia-vpn/amneziawg-openwrt.git;master" >> feeds.conf.default
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
