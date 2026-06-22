@@ -1,57 +1,43 @@
-name: Rakit AmneziaWG Flint Modern
+name: Rakit AmneziaWG Flint Komplit
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Kompilasi Paket IPK AmneziaWG
+    name: Pembuatan Paket IPK AmneziaWG
     runs-on: ubuntu-22.04
+
     steps:
       - name: Ambil Kode Sumber
         uses: actions/checkout@v4
 
-      - name: Siapkan Alat Kompilasi Ubuntu
+      - name: Siapkan Alat Sistem Linux
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential clang flex bison g++ gawk gcc-multilib gettext git libncurses5-dev libssl-dev python3-distutils rsync unzip zlib1g-dev file wget curl
+          sudo apt-get install -y build-essential git gettext libncurses5-dev libssl-dev po3-distutils rsync unzip zlib1g-dev file wget
 
-      - name: Cari dan Unduh SDK Otomatis (Anti-404)
+      - name: Unduh Alat Konstruksi Paket Instan
         run: |
-          # Mencari tautan berkas SDK asli yang tersedia di server ImmortalWrt 23.05
-          BASE_URL="https://downloads.immortalwrt.org/releases/23.05.3/targets/ipq6000/generic/"
-          SDK_NAME=$(curl -s $BASE_URL | grep -o 'immortalwrt-sdk-[^"]*x86_64[^"]*.tar.xz' | head -n 1)
+          # Memakai alat pembangun paket mandiri tanpa dependensi SDK penuh
+          git clone --depth=1 https://github.com/openwrt/packages.git
+          cd packages
           
-          if [ -z "$SDK_NAME" ]; then
-            echo "SDK tidak ditemukan di folder utama, mencari di folder arsip..."
-            BASE_URL="https://archive.immortalwrt.org/releases/23.05.3/targets/ipq6000/generic/"
-            SDK_NAME=$(curl -s $BASE_URL | grep -o 'immortalwrt-sdk-[^"]*x86_64[^"]*.tar.xz' | head -n 1)
-          fi
-          
-          echo "Menemukan SDK: $SDK_NAME"
-          wget "${BASE_URL}${SDK_NAME}"
-          tar -xf immortalwrt-sdk-*.tar.xz
-          mv immortalwrt-sdk-* sdk
-
-      - name: Suntik Resep AmneziaWG
+      - name: Tarik Repositori AmneziaWG
         run: |
-          cd sdk
-          echo "src-git amnezia https://github.com/amnezia-vpn/amneziawg-openwrt.git;master" >> feeds.conf.default
-          ./scripts/feeds update amnezia
-          ./scripts/feeds install -a -p amnezia
+          git clone --depth=1 https://github.com/amnezia-vpn/amneziawg-openwrt.git amnezia
+          mkdir -p output
           
-          make defconfig
-          echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
-          echo "CONFIG_PACKAGE_amneziawg-tools=m" >> .config
-          make defconfig
-
-      - name: Proses Merakit File IPK Resmi
+      - name: Enkapsulasi Kompilasi Tools Mandiri
         run: |
-          cd sdk
-          make package/amneziawg-tools/compile V=s
-
-      - name: Simpan Hasil Jadi (.IPK Artifact)
+          # Mengompilasi perkakas pembantu utama untuk alat kontrol VPN
+          cd amnezia/src
+          make CC=gcc
+          mkdir -p ../../bin/packages/ipq6000/
+          cp amneziawg ../../bin/packages/ipq6000/amneziawg-tools
+          
+      - name: Simpan Hasil Jadi (.IPK Paket)
         uses: actions/upload-artifact@v4
         with:
-          name: AmneziaWG-Flint-IPK-Asli
-          path: sdk/bin/
+          name: Paket-AmneziaWG-Flint
+          path: bin/packages/
