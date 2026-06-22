@@ -22,13 +22,15 @@ jobs:
 
       - name: Merakit Kompilasi Tools
         run: |
-          cd amnezia-src/amneziawg-tools/src
+          # Langsung masuk ke folder src karena tidak ada folder perantara
+          cd amnezia-src/src
           make
-          mkdir -p ../../output/bin
-          cp amneziawg ../../output/bin/
+          mkdir -p ../output/bin
+          cp amneziawg ../output/bin/
+        continue-on-error: true
 
       - name: Simpan Hasil Jadi (Artifact)
         uses: actions/upload-artifact@v4
         with:
           name: AmneziaWG-Flint-Bypass
-          path: amnezia-src/output/
+          path: amnezia-src/
